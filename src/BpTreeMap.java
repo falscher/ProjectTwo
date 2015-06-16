@@ -213,7 +213,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
     /********************************************************************************
      * Recursive helper function for finding a key in B+trees.
      * @param key  the key to find
-     * @param ney  the current node
+     * @param n  the current node
      */
     @SuppressWarnings("unchecked")
     private V find (K key, Node n)
@@ -294,7 +294,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
 
     /********************************************************************************
      * The main method used for testing.
-     * @param  the command-line arguments (args [0] gives number of keys to insert)
+     * @param args the command-line arguments (args [0] gives number of keys to insert)
      */
     public static void main (String [] args)
     {

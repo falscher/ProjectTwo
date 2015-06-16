@@ -69,8 +69,8 @@ public class ExtHashMap <K, V>
 
     /********************************************************************************
      * Construct a hash table that uses Extendable Hashing.
-     * @param classK    the class for keys (K)
-     * @param classV    the class for keys (V)
+     * @param _classK    the class for keys (K)
+     * @param _classV    the class for keys (V)
      * @param initSize  the initial number of buckets (a power of 2, e.g., 4)
      */
     public ExtHashMap (Class <K> _classK, Class <V> _classV, int initSize)
@@ -160,7 +160,7 @@ public class ExtHashMap <K, V>
 
     /********************************************************************************
      * The main method used for testing.
-     * @param  the command-line arguments (args [0] gives number of keys to insert)
+     * @param args the command-line arguments (args [0] gives number of keys to insert)
      */
     public static void main (String [] args)
     {
