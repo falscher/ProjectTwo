@@ -142,7 +142,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
     } // lastKey
 
     /********************************************************************************
-     * Return the portion of the B+Tree map where key < toKey.
+     * Return the portion of the B+Tree map where key less than toKey.
      * @return  the submap with keys in the range [firstKey, toKey)
      */
     public SortedMap <K,V> headMap (K toKey)
@@ -153,7 +153,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
     } // headMap
 
     /********************************************************************************
-     * Return the portion of the B+Tree map where fromKey <= key.
+     * Return the portion of the B+Tree map where fromKey less or equal than key.
      * @return  the submap with keys in the range [fromKey, lastKey]
      */
     public SortedMap <K,V> tailMap (K fromKey)
@@ -165,7 +165,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
 
     /********************************************************************************
      * Return the portion of the B+Tree map whose keys are between fromKey and toKey,
-     * i.e., fromKey <= key < toKey.
+     * i.e., fromKey less or equal than key less than toKey.
      * @return  the submap with keys in the range [fromKey, toKey)
      */
     public SortedMap <K,V> subMap (K fromKey, K toKey)
