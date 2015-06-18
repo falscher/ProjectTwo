@@ -91,8 +91,23 @@ public class BpTreeMap <K extends Comparable <K>, V>
     {
         Set <Map.Entry <K, V>> enSet = new HashSet <> ();
 
-        //  T O   B E   I M P L E M E N T E D
-            
+        Node node = root;
+
+
+        node = (Node) firstKey();
+        //reach to left bottom of the tree.
+
+        do {
+            // add key value pair to set
+            for (int i = 0; i < node.nKeys; i++) {
+                enSet.add (new AbstractMap.SimpleEntry <> (node.key[i], (V) node.ref[i]));
+            }
+
+            // traverse across the leaf pointers
+            node = (Node) node.ref[node.nKeys];
+
+        } while (node != null);
+
         return enSet;
     } // entrySet
 
@@ -126,8 +141,13 @@ public class BpTreeMap <K extends Comparable <K>, V>
     public K firstKey () 
     {
         //  T O   B E   I M P L E M E N T E D
+        Node node = this.root;
 
-        return null;
+        while(!node.isLeaf) {
+            node = (Node)node.ref[0];
+        }
+
+        return node.key[0];
     } // firstKey
 
     /********************************************************************************
@@ -137,8 +157,12 @@ public class BpTreeMap <K extends Comparable <K>, V>
     public K lastKey () 
     {
         //  T O   B E   I M P L E M E N T E D
+        Node node = this.root;
 
-        return null;
+        while(!node.isLeaf) {
+            node = (Node)node.ref[node.nKeys];
+        }
+        return node.key[node.nKeys-1];
     } // lastKey
 
     /********************************************************************************
