@@ -153,7 +153,6 @@ public class BpTreeMap<K extends Comparable<K>, V>
      * @return the last key in the B+Tree map.
      */
     public K lastKey() {
-        //  T O   B E   I M P L E M E N T E D
         Node node = this.root;
 
         while (!node.isLeaf) {
@@ -178,7 +177,6 @@ public class BpTreeMap<K extends Comparable<K>, V>
      * @return the submap with keys in the range [fromKey, lastKey]
      */
     public SortedMap<K, V> tailMap(K fromKey) {
-        //  T O   B E   I M P L E M E N T E D
 
         return subMap(fromKey, lastKey());
     } // tailMap
@@ -190,8 +188,6 @@ public class BpTreeMap<K extends Comparable<K>, V>
      * @return the submap with keys in the range [fromKey, toKey)
      */
     public SortedMap<K, V> subMap(K fromKey, K toKey) {
-        //  T O   B E   I M P L E M E N T E D
-
         SortedMap<K, V> subMap = new TreeMap<>();
 
         Node node = (Node) firstKey();
@@ -216,8 +212,6 @@ public class BpTreeMap<K extends Comparable<K>, V>
      */
     public int size() {
         int sum = 0;
-
-        //  T O   B E   I M P L E M E N T E D
         Node node = (Node) firstKey();
 
         return sum+node.nKeys;
@@ -291,8 +285,21 @@ public class BpTreeMap<K extends Comparable<K>, V>
         } else {
             Node sib = split(key, ref, n);
 
-            //  T O   B E   I M P L E M E N T E D
 
+            if(p == null) {
+                //Node node = (Node)sib.ref[1];
+                insert(n.key[0], ref, sib, p);
+            }
+            else {
+                insert(sib.key[0], ref, p, p);
+            }
+
+            int index = 0;
+            //locate the index of the key to be inserted
+            while(index < sib.nKeys && key.compareTo(sib.key[index])>0) {
+                index++;
+            }
+            wedge(key, ref, sib, index);
         } // if
     } // insert
 
@@ -333,6 +340,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
 
         //new node to store keys
         Node node = new Node(n.isLeaf);
+
         //"split"
         for(int i = mid; i< n.nKeys; i++) {
             node.key[i - mid] = n.key[i];
@@ -355,7 +363,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
 
         //give node a pointer
         if (node.isLeaf) {
-            node.ref[n.nKeys] = n.ref[n.nKeys];
+            node.ref[node.nKeys] = n.ref[n.nKeys];
             n.ref[n.nKeys] = node;
         }
 
