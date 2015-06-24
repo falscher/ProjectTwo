@@ -7,6 +7,7 @@
 import java.io.*;
 import java.lang.reflect.Array;
 
+import static java.lang.System.in;
 import static java.lang.System.out;
 
 import java.util.*;
@@ -321,11 +322,44 @@ public class BpTreeMap<K extends Comparable<K>, V>
      * @param n   the current node
      */
     private Node split(K key, V ref, Node n) {
-        out.println("split not implemented yet");
+        //mid index of the node
+        int mid = n.nKeys/2;
 
-        //  T O   B E   I M P L E M E N T E D
+        int index = 0;
+        //locate the index of the key to be inserted
+        while(index < n.nKeys && key.compareTo(n.key[index])>0) {
+            index++;
+        }
 
-        return null;
+        //new node to store keys
+        Node node = new Node(n.isLeaf);
+        //"split"
+        for(int i = mid; i< n.nKeys; i++) {
+            node.key[i - mid] = n.key[i];
+            if(!n.isLeaf) {
+
+                node.ref[i-mid+1] = n.ref[i+1];
+            }
+            else {
+                node.ref[i - mid] = n.ref[i];
+            }
+        }
+
+        //wedge the key
+        if (index >= mid) {
+            index = index - mid;
+            wedge(key, ref, node, index);
+        } else {
+            wedge(key,ref,n, index);
+        }
+
+        //give node a pointer
+        if (node.isLeaf) {
+            node.ref[n.nKeys] = n.ref[n.nKeys];
+            n.ref[n.nKeys] = node;
+        }
+
+        return node;
     } // split
 
     /********************************************************************************
