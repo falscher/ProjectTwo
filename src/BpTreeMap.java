@@ -330,11 +330,13 @@ public class BpTreeMap<K extends Comparable<K>, V>
      */
     private Node split(K key, V ref, Node n) {
         //mid index of the node
-        int mid = n.nKeys/2;
+
+        int keyCount = n.nKeys;
+        int mid = keyCount/2;
 
         int index = 0;
         //locate the index of the key to be inserted
-        while(index < n.nKeys && key.compareTo(n.key[index])>0) {
+        while(index < keyCount && key.compareTo(n.key[index])>0) {
             index++;
         }
 
@@ -342,7 +344,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
         Node node = new Node(n.isLeaf);
 
         //"split"
-        for(int i = mid; i< n.nKeys; i++) {
+        for(int i = mid; i< keyCount; i++) {
             node.key[i - mid] = n.key[i];
             if(!n.isLeaf) {
 
@@ -351,6 +353,9 @@ public class BpTreeMap<K extends Comparable<K>, V>
             else {
                 node.ref[i - mid] = n.ref[i];
             }
+
+            node.nKeys++;
+            n.nKeys--;
         }
 
         //wedge the key
@@ -363,7 +368,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
 
         //give node a pointer
         if (node.isLeaf) {
-            node.ref[node.nKeys] = n.ref[n.nKeys];
+            node.ref[node.nKeys] = n.ref[keyCount];
             n.ref[n.nKeys] = node;
         }
 
