@@ -1,4 +1,3 @@
-
 /************************************************************************************
  * @file BpTreeMap.java
  * @author John Miller
@@ -7,7 +6,6 @@
 import java.io.*;
 import java.lang.reflect.Array;
 import static java.lang.System.out;
-
 import java.util.*;
 
 /************************************************************************************
@@ -227,8 +225,6 @@ public class BpTreeMap<K extends Comparable<K>, V>
         } while (node != null);
 
         return sum;
-
-        //return sum;
     } // size
 
     /********************************************************************************
@@ -263,16 +259,14 @@ public class BpTreeMap<K extends Comparable<K>, V>
     private V find(K key, Node n) {
         count++;
         for (int i = 0; i < n.nKeys; i++) {
-            K k_i = n.key[i];
-            if (key.compareTo(k_i) <= 0) {
-                if (n.isLeaf) {
-                    return (key.equals(k_i)) ? (V) n.ref[i] : null;
-                } else {
-                    return find(key, (Node) n.ref[i]);
-                } // if
+            K k_i = n.key [i];
+            if ((key.compareTo (k_i) == 0) && (n.isLeaf)) {
+                return (key.equals (k_i)) ? (V) n.ref [i] : null;
+            } else if (key.compareTo (k_i) < 0 && (!n.isLeaf)) {
+                return find (key, (Node) n.ref [i]);
             } // if
         } // for
-        return (n.isLeaf) ? null : find(key, (Node) n.ref[n.nKeys]);
+        return (n.isLeaf) ? null : find (key, (Node) n.ref [n.nKeys]);
     } // find
 
     /********************************************************************************
@@ -293,16 +287,15 @@ public class BpTreeMap<K extends Comparable<K>, V>
             return;
         } // if
 
-        // Node array to keep track of the parent pointers
-        Object _p [] = (Node []) Array.newInstance (Node.class, 1000);
+        //use to store the parent ref/pointer
+        ArrayList<Object> parent = new ArrayList<>();
         int index = 0;
-        _p[index] = (Node) p;
+        parent.add(index, p);
         index++;
-
         // find the leaf node to insert into
         while (!n.isLeaf) {
             boolean found = false;
-            _p[index] = (Node) n;
+            parent.add(index, n);
             index++;
             for (int i = 0; i < n.nKeys; i++) {
                 if (key.compareTo(n.key[i]) < 0) {
@@ -312,11 +305,11 @@ public class BpTreeMap<K extends Comparable<K>, V>
                 } else if (key.equals(n.key[i])) {
                     out.println("BpTreeMap:insert: attempt to insert duplicate key = " + key);
                     return;
-                } // if
+                } // if           
             } // for
             if (!found) {
                 n = (Node) n.ref[n.nKeys];
-            } // if
+            } // if                      
         } // while
 
         // make sure it's not a duplicate key
@@ -350,7 +343,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
 
             // get parent
             index--;
-            p = (Node) _p[index];
+            p = (Node) parent.get(index);
 
             // split the node
             Node sib = split (key, ref, n);
@@ -395,20 +388,20 @@ public class BpTreeMap<K extends Comparable<K>, V>
                     for (int i = 0; i < sib.nKeys-1; i++) {
                         sib.ref[i] = sib.ref[i+1];
                         sib.key[i] = sib.key[i+1];
-                    } // for
+                    }
 
                     sib.ref[sib.nKeys-1] =  sib.ref[sib.nKeys];
 
                     sib.nKeys--;
 
-                } // if
+                }
 
                 finished = true;
 
             } else {
                 // if the parent has no room, the key gets passed up and the parent gets split
                 key = sib.key[0];
-                n = (Node) p;
+                n = p;
                 ref = (V) sib;
 
                 // remove redundant keys
@@ -422,7 +415,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
 
                     sib.nKeys--;
 
-                } // if
+                } // if 
 
             } // if else
         } // while
@@ -430,11 +423,10 @@ public class BpTreeMap<K extends Comparable<K>, V>
 
     /********************************************************************************
      * Wedge the key-ref pair into node n.
-     *
-     * @param key the key to insert
-     * @param ref the value/node to insert
-     * @param n   the current node
-     * @param i   the insertion position within node n
+     * @param key  the key to insert
+     * @param ref  the value/node to insert
+     * @param n    the current node
+     * @param i    the insertion position within node n
      */
     private void wedge (K key, V ref, Node n, int i)
     {
@@ -444,17 +436,16 @@ public class BpTreeMap<K extends Comparable<K>, V>
             else { n.ref [j] = n.ref [j - 1]; }
         } // for
         n.key [i] = key;
-        if (!n.isLeaf) { n.ref [i + 1] = (Node) ref; }
+        if (!n.isLeaf) { n.ref [i + 1] = ref; }
         else { n.ref [i] = ref; }
         n.nKeys++;
     } // wedge
 
     /********************************************************************************
      * Split node n and return the newly created node.
-     *
-     * @param key the key to insert
-     * @param ref the value/node to insert
-     * @param n   the current node
+     * @param key  the key to insert
+     * @param ref  the value/node to insert
+     * @param n    the current node
      */
     private Node split (K key, V ref, Node n)
     {
@@ -476,11 +467,10 @@ public class BpTreeMap<K extends Comparable<K>, V>
             //n.key[i] = null;
 
             if (!n.isLeaf) {
-                sib.ref[i-mid+1] = (Node) n.ref[i+1];
-                //n.ref[i+1] = null;
+                sib.ref[i-mid+1] = n.ref[i+1];
             } else {
                 sib.ref[i-mid] = n.ref[i];
-                //n.ref[i] = null;
+
             } // if else
 
             sib.nKeys++;
@@ -503,10 +493,10 @@ public class BpTreeMap<K extends Comparable<K>, V>
         if (sib.isLeaf)
         {
             // new node points to right sibling (if it exists)
-            sib.ref[sib.nKeys] = (Node) n.ref[numKeys];
+            sib.ref[sib.nKeys] = n.ref[numKeys];
 
             // current node points to new sibling
-            n.ref[n.nKeys] = (Node) sib;
+            n.ref[n.nKeys] = sib;
         } // if
 
         return sib;
@@ -536,4 +526,3 @@ public class BpTreeMap<K extends Comparable<K>, V>
     } // main
 
 } // BpTreeMap class
-
