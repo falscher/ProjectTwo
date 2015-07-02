@@ -12,6 +12,12 @@ import java.util.*;
  * This class provides B+Tree maps.  B+Trees are used as multi-level index structures
  * that provide efficient access for both point queries and range queries.
  */
+/**
+ * @author esc
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class BpTreeMap<K extends Comparable<K>, V>
         extends AbstractMap<K, V>
         implements Serializable, Cloneable, SortedMap<K, V> {
@@ -72,7 +78,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
     public BpTreeMap(Class<K> _classK, Class<V> _classV) {
         classK = _classK;
         classV = _classV;
-        root = new Node(true);
+        setRoot(new Node(true));
     } // constructor
 
     /********************************************************************************
@@ -91,7 +97,9 @@ public class BpTreeMap<K extends Comparable<K>, V>
     public Set<Map.Entry<K, V>> entrySet() {
         Set<Map.Entry<K, V>> enSet = new HashSet<>();
 
-        Node node = (Node) firstKey();
+        //get first key
+        Node node = firstKeyNode();
+
         //reach to left bottom of the tree.
 
         do {
@@ -99,6 +107,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
             for (int i = 0; i < node.nKeys; i++) {
                 enSet.add(new AbstractMap.SimpleEntry<>(node.key[i], (V) node.ref[i]));
             }
+            node = (Node) node.ref[node.nKeys];
         } while (node != null);
 
 
@@ -113,7 +122,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
      */
     @SuppressWarnings("unchecked")
     public V get(Object key) {
-        return find((K) key, root);
+        return find((K) key, getRoot());
     } // get
 
     /********************************************************************************
@@ -124,7 +133,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
      * @return null (not the previous value)
      */
     public V put(K key, V value) {
-        insert(key, value, root, null);
+        insert(key, value, getRoot(), null);
         return null;
     } // put
 
@@ -134,7 +143,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
      * @return the first key in the B+Tree map.
      */
     public K firstKey() {
-        Node node = this.root;
+        Node node = this.getRoot();
 
         while (!node.isLeaf) {
             node = (Node) node.ref[0];
@@ -143,13 +152,22 @@ public class BpTreeMap<K extends Comparable<K>, V>
         return node.key[0];
     } // firstKey
 
+    public BpTreeMap<K, V>.Node firstKeyNode() {
+        Node node = this.getRoot();
+
+        while (!node.isLeaf) {
+            node = (Node) node.ref[0];
+        }
+
+        return node;
+    } // firstKey
     /********************************************************************************
      * Return the last (largest) key in the B+Tree map.
      *
      * @return the last key in the B+Tree map.
      */
     public K lastKey() {
-        Node node = this.root;
+        Node node = this.getRoot();
 
         while (!node.isLeaf) {
             node = (Node) node.ref[node.nKeys];
@@ -189,7 +207,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
     public SortedMap<K, V> subMap(K fromKey, K toKey) {
         SortedMap<K, V> subMap = new TreeMap<>();
 
-        Node node = (Node) firstKey();
+        Node node = firstKeyNode();
 
         //left most bottom
 
@@ -215,7 +233,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
      */
     public int size() {
         int sum = 0;
-        Node node = (Node) firstKey();
+        Node node = firstKeyNode();
         do {
             // add number of keys in current leaf to sum
             sum += node.nKeys;
@@ -234,7 +252,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
      * @param level the current level of the B+Tree
      */
     @SuppressWarnings("unchecked")
-    private void print(Node n, int level) {
+    public void print(Node n, int level) {
         out.println("BpTreeMap");
         out.println("-------------------------------------------");
 
@@ -257,7 +275,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
      */
     @SuppressWarnings("unchecked")
     private V find(K key, Node n) {
-        count++;
+        setCount(getCount() + 1);
         for (int i = 0; i < n.nKeys; i++) {
             K k_i = n.key [i];
             if ((key.compareTo (k_i) == 0) && (n.isLeaf)) {
@@ -374,7 +392,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
                 } // if
 
                 // reassign root
-                root = newRoot;
+                setRoot(newRoot);
                 finished = true;
 
             } else if (p.nKeys < ORDER - 1) {
@@ -514,7 +532,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
 
         for (int i = 1; i < totKeys; i++) {
             bpt.put(i, i * i);
-            bpt.print(bpt.root, 0);
+            bpt.print(bpt.getRoot(), 0);
         } // for
 
         for (int i = 1; i < totKeys; i++) {
@@ -522,7 +540,25 @@ public class BpTreeMap<K extends Comparable<K>, V>
         } // for
 
         out.println("-------------------------------------------");
-        out.println("Average number of nodes accessed = " + bpt.count / (double) totKeys);
+        out.println("Average number of nodes accessed = " + bpt.getCount() / (double) totKeys);
+       
+
     } // main
+
+	public Node getRoot() {
+		return root;
+	}
+
+	public void setRoot(Node root) {
+		this.root = root;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
 
 } // BpTreeMap class

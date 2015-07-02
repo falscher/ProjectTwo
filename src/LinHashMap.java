@@ -1,4 +1,3 @@
-
 /************************************************************************************
  * @file LinHashMap.java
  * // TODO 
@@ -17,6 +16,12 @@ import java.util.*;
 /************************************************************************************
  * This class provides hash maps that use the Linear Hashing algorithm.
  * A hash table is created that is an array of buckets.
+ */
+/**
+ * @author esc
+ *
+ * @param <K>
+ * @param <V>
  */
 public class LinHashMap <K, V>
        extends AbstractMap <K, V>
@@ -131,7 +136,7 @@ public class LinHashMap <K, V>
             i = h2(key);
         }
         for (Bucket b = hTable.get(i); b != null; b = b.next) {
-            count++;
+            setCount(getCount() + 1);
             for (int j = 0; j < b.nKeys; j++){
                 if (key.equals(b.key[j])){
                     return b.value[j];
@@ -223,7 +228,7 @@ public class LinHashMap <K, V>
     /********************************************************************************
      * Print the hash table.
      */
-    private void print ()
+    public void print ()
     {
         out.println ("Hash Table (Linear Hashing)");
         out.println ("-------------------------------------------");
@@ -233,7 +238,8 @@ public class LinHashMap <K, V>
             out.print (i + ":\t");
             boolean isFirstBucket = true;
             for (Bucket b = hTable.get(i); b != null; b = b.next) {
-                if (!isFirstBucket) out.print ("-->");
+                if (!isFirstBucket) 
+                	out.print ("-->");
 				out.print("[");
                 for (int j = 0; j < b.nKeys; j++){
                     out.print (" (" + b.key[j] +","+ b.value[j] + ") ");
@@ -283,8 +289,15 @@ public class LinHashMap <K, V>
             out.println ("key = " + i + " value = " + ht.get (i));
         } // for
         out.println ("-------------------------------------------");
-        out.println ("Average number of buckets accessed = " + ht.count / (double) nKeys);
+        out.println ("Average number of buckets accessed = " + ht.getCount() / (double) nKeys);
     } // main
 
-} // LinHashMap class
+	public int getCount() {
+		return count;
+	}
 
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+} // LinHashMap class
